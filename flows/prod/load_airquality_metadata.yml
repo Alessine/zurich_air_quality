@@ -54,12 +54,23 @@ tasks:
 
       for key, file in zip(['Standorte', 'Parameter', 'Grenzwerte'], ["{{ render(vars.locations_csv_file) }}", "{{ render(vars.parameters_csv_file) }}", "{{ render(vars.limits_csv_file) }}"]):
           csv_filename = file
-          fieldnames = dict[key][0].keys()
+          fieldnames = [''.join([i if ord(i) < 128 else '_' for i in key]) for key in dict[key][0].keys()]
+          translation_table = dict.fromkeys(map(ord, '[. ]'), None)
+          fieldnames = [fieldname.translate(translation_table) for fieldname in fieldnames]
+          
+          items_clean = []
+          for item in dict[key]:
+            item_keys = [''.join([i if ord(i) < 128 else '_' for i in item_key]) for item_key in item.keys()]
+            translation_table = dict.fromkeys(map(ord, '[. ]'), None)
+            item_keys = [item_key.translate(translation_table) for item_key in item_keys]
+
+            item_data = {item_key : value for item_key, value in zip(item_keys, item.values())}
+            items_clean.append(item_data)
 
           with open(csv_filename, mode='w', newline='') as file:
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             writer.writeheader()
-            writer.writerows(dict[key])
+            writer.writerows(items_clean)
       
   - id: upload_locations_to_gcs
     type: io.kestra.plugin.gcp.gcs.Upload
