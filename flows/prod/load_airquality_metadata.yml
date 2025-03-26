@@ -14,7 +14,6 @@ variables:
   limits_csv_file: "limits.csv"
   limits_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.limits_csv_file}}"
   limits_data: "{{outputs.transform.outputFiles[vars.limits_csv_file]}}"
-
   table: "{{kv('GCP_DATASET')}}.uzg_ogd_metadaten"
   
 
@@ -86,9 +85,6 @@ tasks:
     type: io.kestra.plugin.gcp.gcs.Upload
     from: "{{render(vars.limits_data)}}"
     to: "{{render(vars.limits_gcs_file)}}"
-
-
-    
 
   - id: purge_files
     type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
