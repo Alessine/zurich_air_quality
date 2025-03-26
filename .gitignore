@@ -1,11 +1,9 @@
 ### credentials ###
 *credentials/*
+*docker-compose.yml
 
 ### data ###
 *data/*
-
-### flows are synced via Kestra ###
-*flows/*
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
