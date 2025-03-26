@@ -1,0 +1,98 @@
+id: load_airquality_metadata
+namespace: prod
+
+variables:
+  full_json_file: "uzg_ogd_metadaten.json"
+  full_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.full_json_file}}"
+  full_data: "{{outputs.extract.outputFiles[vars.full_json_file]}}"
+  locations_csv_file: "locations.csv"
+  locations_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.locations_csv_file}}"
+  locations_data: "{{outputs.transform.outputFiles[vars.locations_csv_file]}}"
+  parameters_csv_file: "parameters.csv"
+  parameters_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.parameters_csv_file}}"
+  parameters_data: "{{outputs.transform.outputFiles[vars.parameters_csv_file]}}"
+  limits_csv_file: "limits.csv"
+  limits_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.limits_csv_file}}"
+  limits_data: "{{outputs.transform.outputFiles[vars.limits_csv_file]}}"
+
+  table: "{{kv('GCP_DATASET')}}.uzg_ogd_metadaten"
+  
+
+tasks:
+  - id: set_label
+    type: io.kestra.plugin.core.execution.Labels
+    labels:
+      file: "{{render(vars.full_json_file)}}"
+
+  - id: extract
+    type: io.kestra.plugin.scripts.shell.Commands
+    outputFiles:
+      - "*.json"
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - wget -qO- https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_tageswerte/download/{{render(vars.full_json_file)}} > {{render(vars.full_json_file)}}
+
+  - id: upload_json_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.full_data)}}"
+    to: "{{render(vars.full_gcs_file)}}"
+
+  - id: transform    
+    type: io.kestra.plugin.scripts.python.Script    
+    containerImage: python:slim
+    inputFiles:
+      data.json: "{{ render(vars.full_data) }}"    
+    outputFiles:
+      - "*.csv"    
+    script: |      
+      import json
+      import csv
+
+      with open("data.json", "r") as f:
+        dict = json.load(f)
+
+      for key, file in zip(['Standorte', 'Parameter', 'Grenzwerte'], ["{{ render(vars.locations_csv_file) }}", "{{ render(vars.parameters_csv_file) }}", "{{ render(vars.limits_csv_file) }}"]):
+          csv_filename = file
+          fieldnames = dict[key][0].keys()
+
+          with open(csv_filename, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(dict[key])
+      
+  - id: upload_locations_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.locations_data)}}"
+    to: "{{render(vars.locations_gcs_file)}}"
+
+  - id: upload_parameters_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.parameters_data)}}"
+    to: "{{render(vars.parameters_gcs_file)}}"
+
+  - id: upload_limits_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.limits_data)}}"
+    to: "{{render(vars.limits_gcs_file)}}"
+
+
+    
+
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+    description: If you would like to explore Kestra outputs, disable it.
+    disabled: true
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{kv('GCP_CREDS')}}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
+  
+triggers:
+  - id: metadata_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "10 4 * * *"
