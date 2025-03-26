@@ -1,21 +1,11 @@
 ### credentials ###
-*.json
-
-### medium folder ###
-*/medium
-
-### dotenv ###
-.env
-
-### Spark ###
-*jdk*
-*spark-3.3.2*
+*credentials/*
 
 ### data ###
-*/data*
-module_1/*/*.csv
-*.gz
-*/ny_taxi_postgres_data/*
+*data/*
+
+### flows are synced via Kestra ###
+*flows/*
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
