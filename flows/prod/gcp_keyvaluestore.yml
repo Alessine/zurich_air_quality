@@ -8,20 +8,25 @@ inputs:
     defaults: false
 
 tasks:
+  - id: gcp_creds
+    type: io.kestra.plugin.core.kv.Set
+    key: GCP_CREDS
+    kvType: JSON
+    value: "{{ secret('GCP_SERVICE_ACCOUNT') }}"
+  - id: gcp_dev_project_id
+    type: io.kestra.plugin.core.kv.Set
+    key: GCP_PROJECT_ID
+    kvType: STRING
+    value: zurich-air-quality
+  - id: gcp_dev_location
+    type: io.kestra.plugin.core.kv.Set
+    key: GCP_LOCATION
+    kvType: STRING
+    value: europe-west6
   - id: if_dev
     type: io.kestra.plugin.core.flow.If
     condition: "{{ inputs.is_prod == false }}"
     then:
-    - id: gcp_dev_project_id
-      type: io.kestra.plugin.core.kv.Set
-      key: GCP_PROJECT_ID
-      kvType: STRING
-      value: zurich-air-quality
-    - id: gcp_dev_location
-      type: io.kestra.plugin.core.kv.Set
-      key: GCP_LOCATION
-      kvType: STRING
-      value: europe-west6
     - id: gcp_dev_bucket_name
       type: io.kestra.plugin.core.kv.Set
       key: GCP_BUCKET_NAME
@@ -37,16 +42,6 @@ tasks:
     type: io.kestra.plugin.core.flow.If
     condition: "{{ inputs.is_prod == true }}"
     then:
-    - id: gcp_project_id
-      type: io.kestra.plugin.core.kv.Set
-      key: GCP_PROJECT_ID
-      kvType: STRING
-      value: zurich-air-quality
-    - id: gcp_location
-      type: io.kestra.plugin.core.kv.Set
-      key: GCP_LOCATION
-      kvType: STRING
-      value: europe-west6
     - id: gcp_bucket_name
       type: io.kestra.plugin.core.kv.Set
       key: GCP_BUCKET_NAME
