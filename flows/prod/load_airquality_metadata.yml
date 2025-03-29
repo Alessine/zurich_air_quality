@@ -1,0 +1,215 @@
+id: load_airquality_metadata
+namespace: prod
+
+variables:
+  full_json_file: "uzg_ogd_metadaten.json"
+  full_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.full_json_file}}"
+  full_data: "{{outputs.extract.outputFiles[vars.full_json_file]}}"
+  locations_csv_file: "locations.csv"
+  locations_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.locations_csv_file}}"
+  locations_data: "{{outputs.transform.outputFiles[vars.locations_csv_file]}}"
+  parameters_csv_file: "parameters.csv"
+  parameters_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.parameters_csv_file}}"
+  parameters_data: "{{outputs.transform.outputFiles[vars.parameters_csv_file]}}"
+  limits_csv_file: "limits.csv"
+  limits_gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.limits_csv_file}}"
+  limits_data: "{{outputs.transform.outputFiles[vars.limits_csv_file]}}"
+  locations_table: "{{kv('GCP_DATASET')}}.locations_metadata"
+  parameters_table: "{{kv('GCP_DATASET')}}.parameters_metadata"
+  limits_table: "{{kv('GCP_DATASET')}}.limits_metadata"
+
+tasks:
+  - id: set_label
+    type: io.kestra.plugin.core.execution.Labels
+    labels:
+      file: "{{render(vars.full_json_file)}}"
+
+  - id: extract
+    type: io.kestra.plugin.scripts.shell.Commands
+    outputFiles:
+      - "*.json"
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - wget -qO- https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_tageswerte/download/{{render(vars.full_json_file)}} > {{render(vars.full_json_file)}}
+
+  - id: upload_json_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.full_data)}}"
+    to: "{{render(vars.full_gcs_file)}}"
+
+  - id: transform    
+    type: io.kestra.plugin.scripts.python.Script    
+    containerImage: python:slim
+    inputFiles:
+      data.json: "{{ render(vars.full_data) }}"    
+    outputFiles:
+      - "*.csv"    
+    script: |      
+      import json
+      import csv
+
+      with open("data.json", "r") as f:
+        dict = json.load(f)
+
+      for key, file in zip(['Standorte', 'Parameter', 'Grenzwerte'], ["{{ render(vars.locations_csv_file) }}", "{{ render(vars.parameters_csv_file) }}", "{{ render(vars.limits_csv_file) }}"]):
+          csv_filename = file
+          fieldnames = [''.join([i if ord(i) < 128 else '_' for i in key]) for key in dict[key][0].keys()]
+          translation_table = dict.fromkeys(map(ord, '[. ]'), None)
+          fieldnames = [fieldname.translate(translation_table) for fieldname in fieldnames]
+          
+          items_clean = []
+          for item in dict[key]:
+            item_keys = [''.join([i if ord(i) < 128 else '_' for i in item_key]) for item_key in item.keys()]
+            translation_table = dict.fromkeys(map(ord, '[. ]'), None)
+            item_keys = [item_key.translate(translation_table) for item_key in item_keys]
+
+            item_data = {item_key : value for item_key, value in zip(item_keys, item.values())}
+            items_clean.append(item_data)
+
+          with open(csv_filename, mode='w', newline='') as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(items_clean)
+      
+  - id: upload_locations_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.locations_data)}}"
+    to: "{{render(vars.locations_gcs_file)}}"
+
+  - id: upload_parameters_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.parameters_data)}}"
+    to: "{{render(vars.parameters_gcs_file)}}"
+
+  - id: upload_limits_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.limits_data)}}"
+    to: "{{render(vars.limits_gcs_file)}}"
+
+  - id: bq_create_locations_table_ext
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.{{render(vars.locations_table)}}_ext` 
+      ( 
+        ID STRING,
+        Name STRING,
+        Kurzname STRING,
+        Code STRING,
+        Koordinaten_LV95_X NUMERIC,
+        Koordinaten_LV95_Y NUMERIC,
+        Koordinaten_WGS84_lat NUMERIC,
+        Koordinaten_WGS84_lng NUMERIC,
+        Adresse STRING,
+        H_heM_M NUMERIC,
+        Beschreibung STRING
+      )
+      OPTIONS (
+        format = 'CSV',
+        uris = ['{{render(vars.locations_gcs_file)}}'],
+        skip_leading_rows = 1,
+        ignore_unknown_values = TRUE
+      );
+
+  - id: bq_create_locations_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.{{render(vars.locations_table)}}`
+      AS
+      SELECT
+        ID AS id,
+        Name AS name,
+        Kurzname AS short_name,
+        Code AS code,
+        Koordinaten_LV95_X AS coords_lv95_x,
+        Koordinaten_LV95_Y AS coords_lv95_y,
+        Koordinaten_WGS84_lat AS lat,
+        Koordinaten_WGS84_lng AS long,
+        Adresse AS address,
+        H_heM_M AS elevation,
+        Beschreibung AS description
+      FROM
+        `{{kv('GCP_PROJECT_ID')}}.{{render(vars.locations_table)}}_ext`
+        ;
+
+  - id: bq_create_parameters_table_ext
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.{{render(vars.parameters_table)}}_ext` 
+      ( 
+        ID STRING,
+        Name STRING,
+        Einheit STRING,
+        Beschreibung STRING
+      )
+      OPTIONS (
+        format = 'CSV',
+        uris = ['{{render(vars.parameters_gcs_file)}}'],
+        skip_leading_rows = 1,
+        ignore_unknown_values = TRUE
+      );
+
+  - id: bq_create_parameters_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.{{render(vars.parameters_table)}}`
+      AS
+      SELECT
+        ID AS id,
+        Name AS name,
+        Einheit AS unit,
+        Beschreibung AS description
+      FROM
+        `{{kv('GCP_PROJECT_ID')}}.{{render(vars.parameters_table)}}_ext`
+        ;
+
+  - id: bq_create_limits_table_ext
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      CREATE OR REPLACE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.{{render(vars.limits_table)}}_ext` 
+      ( 
+        ID STRING,
+        Immissionsgrenzwert NUMERIC,
+        Einheit STRING,
+        Intervall STRING,
+        StatistischeDefinition STRING
+      )
+      OPTIONS (
+        format = 'CSV',
+        uris = ['{{render(vars.limits_gcs_file)}}'],
+        skip_leading_rows = 1,
+        ignore_unknown_values = TRUE
+      );
+
+  - id: bq_create_limits_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      CREATE OR REPLACE TABLE `{{kv('GCP_PROJECT_ID')}}.{{render(vars.limits_table)}}`
+      AS
+      SELECT
+        ID AS id,
+        Immissionsgrenzwert AS emission_limit,
+        Einheit AS unit,
+        Intervall AS granularity,
+        StatistischeDefinition AS stat_definition
+      FROM
+        `{{kv('GCP_PROJECT_ID')}}.{{render(vars.limits_table)}}_ext`
+        ;
+
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+    description: If you would like to explore Kestra outputs, disable it.
+    disabled: true
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{kv('GCP_CREDS')}}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
+  
+triggers:
+  - id: metadata_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "10 4 * * *"
