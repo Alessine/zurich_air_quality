@@ -14,8 +14,10 @@ SELECT
   parameter_category,
   parameter_description,
   unit,
-  value
+  value,
+  emission_limit
 FROM
   ${ref("air_quality_staging")}
 WHERE
   date = max_date
+  AND parameter != 'O3_nb_h1>120'

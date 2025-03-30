@@ -1,0 +1,15 @@
+config {
+  type: "table"
+}
+
+SELECT
+  year,
+  location_short_name,
+  parameter,
+  SUM(limit_exceeded) AS num_days_exceeded
+FROM
+  ${ref('air_quality_daily')}
+GROUP BY
+  year,
+  location_short_name,
+  parameter

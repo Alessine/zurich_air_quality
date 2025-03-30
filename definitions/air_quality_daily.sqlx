@@ -23,3 +23,4 @@ FROM
   ${ref("air_quality_staging")}
 WHERE
   date > '2023-12-31'
+  AND parameter != 'O3_nb_h1>120'
