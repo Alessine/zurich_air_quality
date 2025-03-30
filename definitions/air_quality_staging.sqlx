@@ -1,7 +1,8 @@
 config {
     type: "table",
     bigquery: {
-        partitionBy: 'date'
+        partitionBy: 'date',
+        clusterBy: ['location']
     }
 }
 
