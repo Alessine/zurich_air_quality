@@ -22,6 +22,7 @@ SELECT
   loc_dims.lat AS location_lat,
   loc_dims.long AS location_long,
   parameter,
+  param_dims.name AS parameter_name,
   param_dims.description AS parameter_description,
   CASE
     WHEN parameter IN ('rH', 'StrGlo', 'P', 'WVv', 'WVs', 'RainDur', 'O3_nb_h1>120', 'O3_max_h1', 'O3') THEN 'weather'
