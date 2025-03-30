@@ -1,0 +1,19 @@
+config {
+    type: "table"
+}
+
+SELECT
+  date,
+  location_short_name,
+  location_description,
+  location_lat,
+  location_long,
+  parameter,
+  parameter_category,
+  parameter_description,
+  unit,
+  value
+FROM
+  ${ref("air_quality_staging")}
+WHERE
+  date = max_date

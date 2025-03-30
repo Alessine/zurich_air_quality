@@ -1,0 +1,41 @@
+config {
+    type: "table",
+    bigquery: {
+      partitionBy: 'date'
+    }
+}
+
+SELECT
+  date,
+  EXTRACT(MONTH
+  FROM
+    date) AS month,
+  EXTRACT(YEAR
+  FROM
+    date) AS year,
+  MAX(date) OVER(PARTITION BY location, parameter) AS max_date,
+  location,
+  loc_dims.short_name AS location_short_name,
+  loc_dims.description AS location_description,
+  loc_dims.elevation AS location_elevation,
+  loc_dims.lat AS location_lat,
+  loc_dims.long AS location_long,
+  parameter,
+  param_dims.description AS parameter_description,
+  CASE
+    WHEN parameter IN ('rH', 'StrGlo', 'P', 'WVv', 'WVs', 'RainDur', 'O3_nb_h1>120', 'O3_max_h1', 'O3') THEN 'weather'
+    ELSE 'pollutant'
+END
+  AS parameter_category,
+  air_quality_facts.unit,
+  value
+FROM
+  `zurich-air-quality.air_quality_data.daily_air_quality` air_quality_facts
+JOIN
+  `zurich-air-quality.air_quality_data.parameters_metadata` param_dims
+ON
+  air_quality_facts.parameter = param_dims.id
+JOIN
+  `zurich-air-quality.air_quality_data.locations_metadata` loc_dims
+ON
+  air_quality_facts.location = loc_dims.id

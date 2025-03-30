@@ -1,0 +1,5 @@
+defaultProject: zurich-air-quality
+defaultLocation: europe-west6
+defaultDataset: dataform
+defaultAssertionDataset: dataform_assertions
+dataformCoreVersion: 3.0.0
