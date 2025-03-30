@@ -8,6 +8,7 @@ config {
 
 SELECT
   date,
+  year,
   location,
   location_short_name,
   parameter,
@@ -18,3 +19,5 @@ SELECT
   AVG(value) OVER(PARTITION BY location, parameter ORDER BY date ROWS BETWEEN 7 PRECEDING AND CURRENT ROW) AS value_7d
 FROM
   ${ref("air_quality_staging")}
+WHERE
+  year > 2022
