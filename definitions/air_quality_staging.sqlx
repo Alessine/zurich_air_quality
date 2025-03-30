@@ -1,7 +1,7 @@
 config {
     type: "table",
     bigquery: {
-      partitionBy: 'date'
+        partitionBy: 'date'
     }
 }
 
@@ -16,6 +16,7 @@ SELECT
   MAX(date) OVER(PARTITION BY location, parameter) AS max_date,
   location,
   loc_dims.short_name AS location_short_name,
+  loc_dims.address AS location_address,
   loc_dims.description AS location_description,
   loc_dims.elevation AS location_elevation,
   loc_dims.lat AS location_lat,
