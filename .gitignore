@@ -1,3 +1,6 @@
+<<<<<<< HEAD
+node_modules/
+=======
 ### credentials ###
 *credentials/*
 
@@ -388,3 +391,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,macos,windows,linux,dotenv,pycharm,visualstudiocode
+>>>>>>> refs/heads/develop

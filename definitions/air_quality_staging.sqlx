@@ -1,0 +1,45 @@
+config {
+    type: "table",
+    bigquery: {
+        partitionBy: 'date',
+        clusterBy: ['location']
+    }
+}
+
+SELECT
+  air_quality_facts.date AS date,
+  DATE_TRUNC(air_quality_facts.date, MONTH) AS month,
+  DATE_TRUNC(air_quality_facts.date, YEAR) AS year,
+  MAX(air_quality_facts.date) OVER(PARTITION BY air_quality_facts.location, air_quality_facts.parameter) AS max_date,
+  air_quality_facts.location,
+  loc_dims.short_name AS location_short_name,
+  loc_dims.address AS location_address,
+  loc_dims.description AS location_description,
+  loc_dims.elevation AS location_elevation,
+  loc_dims.lat AS location_lat,
+  loc_dims.long AS location_long,
+  air_quality_facts.parameter,
+  param_dims.name AS parameter_name,
+  param_dims.description AS parameter_description,
+  limit_dims.emission_limit AS emission_limit,
+  CASE
+    WHEN air_quality_facts.parameter IN ('rH', 'StrGlo', 'P', 'WVv', 'WVs', 'RainDur', 'O3_nb_h1>120', 'O3_max_h1', 'O3') THEN 'weather'
+    ELSE 'pollutant'
+END
+  AS parameter_category,
+  air_quality_facts.unit,
+  air_quality_facts.value
+FROM
+  ${ref("air_quality_facts")} AS air_quality_facts
+JOIN
+  ${ref("parameter_dims")} AS param_dims
+ON
+  air_quality_facts.parameter = param_dims.id
+JOIN
+  ${ref("location_dims")} AS loc_dims
+ON
+  air_quality_facts.location = loc_dims.id
+LEFT JOIN
+  ${ref("limit_dims")} AS limit_dims
+ON
+  air_quality_facts.parameter = limit_dims.id

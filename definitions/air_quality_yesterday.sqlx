@@ -1,0 +1,23 @@
+config {
+    type: "table"
+}
+
+SELECT
+  date,
+  location_short_name,
+  location_description,
+  location_address,
+  location_lat,
+  location_long,
+  parameter,
+  parameter_name,
+  parameter_category,
+  parameter_description,
+  unit,
+  value,
+  emission_limit
+FROM
+  ${ref("air_quality_staging")}
+WHERE
+  date = max_date
+  AND parameter != 'O3_nb_h1>120'

@@ -1,0 +1,11 @@
+config {
+    type: "view"
+}
+
+SELECT
+  id,
+  name,
+  unit,
+  description
+FROM
+  `zurich-air-quality.air_quality_data.parameters_metadata`

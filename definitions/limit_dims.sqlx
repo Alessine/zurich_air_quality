@@ -1,0 +1,16 @@
+config {
+    type: 'view'
+}
+
+SELECT
+  CASE
+    WHEN id = 'O3' THEN 'O3_max_h1'
+    ELSE id
+END
+  AS id,
+  emission_limit,
+  stat_definition
+FROM
+  `zurich-air-quality.air_quality_data.limits_metadata`
+WHERE
+  granularity != 'y1'

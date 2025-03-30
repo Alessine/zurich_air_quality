@@ -1,0 +1,26 @@
+config {
+    type: "table",
+    bigquery: {
+        partitionBy: "date",
+        clusterBy: ["location"]
+    }
+}
+
+SELECT
+  date,
+  year,
+  location,
+  location_short_name,
+  parameter,
+  parameter_name,
+  parameter_category,
+  unit,
+  value,
+  AVG(value) OVER(PARTITION BY location, parameter ORDER BY date ROWS BETWEEN 7 PRECEDING AND CURRENT ROW) AS value_7d,
+  emission_limit,
+  CAST(value > emission_limit AS INT64) AS limit_exceeded
+FROM
+  ${ref("air_quality_staging")}
+WHERE
+  date > '2023-12-31'
+  AND parameter != 'O3_nb_h1>120'
