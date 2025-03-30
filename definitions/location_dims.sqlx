@@ -1,0 +1,18 @@
+config {
+    type: "view"
+}
+
+SELECT
+  id,
+  name,
+  short_name,
+  code,
+  coords_lv95_x,
+  coords_lv95_y,
+  lat,
+  long,
+  address,
+  elevation,
+  description
+FROM
+  `zurich-air-quality.air_quality_data.locations_metadata`

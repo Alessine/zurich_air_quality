@@ -30,12 +30,12 @@ END
   air_quality_facts.unit,
   value
 FROM
-  `zurich-air-quality.air_quality_data.daily_air_quality` air_quality_facts
+  ${ref("air_quality_facts")} AS air_quality_facts
 JOIN
-  `zurich-air-quality.air_quality_data.parameters_metadata` param_dims
+  ${ref("parameter_dims")} AS param_dims
 ON
   air_quality_facts.parameter = param_dims.id
 JOIN
-  `zurich-air-quality.air_quality_data.locations_metadata` loc_dims
+  ${ref("location_dims")} AS loc_dims
 ON
   air_quality_facts.location = loc_dims.id
