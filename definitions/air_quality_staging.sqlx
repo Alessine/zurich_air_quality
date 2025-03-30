@@ -8,12 +8,8 @@ config {
 
 SELECT
   air_quality_facts.date AS date,
-  EXTRACT(MONTH
-  FROM
-    air_quality_facts.date) AS month,
-  EXTRACT(YEAR
-  FROM
-    air_quality_facts.date) AS year,
+  DATE_TRUNC(air_quality_facts.date, MONTH) AS month,
+  DATE_TRUNC(air_quality_facts.date, YEAR) AS year,
   MAX(air_quality_facts.date) OVER(PARTITION BY air_quality_facts.location, air_quality_facts.parameter) AS max_date,
   air_quality_facts.location,
   loc_dims.short_name AS location_short_name,
