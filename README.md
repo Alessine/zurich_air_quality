@@ -1,6 +1,6 @@
 # End-to-end Data Pipeline: Zurich Air Quality Data
 
-![photo of a city in the smog](./smog.jpg)
+![photo of a city in the smog](./img/smog.jpg)
 
 Photo by [Call Me Fred](https://unsplash.com/de/@callmefred) on [Unsplash](https://unsplash.com/de/fotos/luftaufnahme-der-stadt-uDLtqbbVR4I)
 
@@ -31,7 +31,7 @@ The project utilizes the following technologies:
 
 Below is an illustration of the different steps in the data pipeline and the tools used to complete each one:
 
-![screenshot of project architecture](./architecture_screenshot.png)
+![screenshot of project architecture](./img/architecture_screenshot.png)
 
 In the following sections, there's detailed information on how each of these steps was implemented.
 
@@ -45,15 +45,15 @@ apt update
 docker compose -f /home/angelakniederberger/docker-compose.yml start
 ```
 
-In Kestra, I scheduled three [flows](./flows/prod): to set the key-value pairs for Google Cloud authentication and extract (1) the air pollution metrics and (2) the metadata on air pollutants, emission limits and data collection locations. After downloading the data from the Open Data Catalog, it gets saved to Google Cloud Storage and from there loaded into BigQuery tables. 
+In Kestra, I scheduled three [flows](./img/flows/prod): to set the key-value pairs for Google Cloud authentication and extract (1) the air pollution metrics and (2) the metadata on air pollutants, emission limits and data collection locations. After downloading the data from the Open Data Catalog, it gets saved to Google Cloud Storage and from there loaded into BigQuery tables. 
 
-For the air quality metrics, which are available in `.csv` format, the data then gets loaded into one BigQuery table incrementally (day by day). The metadata is provided in a nested `.json` format, for which I added a python transform into the Kestra flow to unnest and store it in separate `.csv` files. These are then also loaded into BigQuery tables as snapshot datasets.
+For the air quality metrics, which are available in `.csv` format ([sample data](./data/ugz_ogd_air_d1_2025.csv)), the data then gets loaded into one BigQuery table incrementally (day by day). The metadata is provided in a nested `.json` format ([sample data](./data/uzg_ogd_metadaten.json)), for which I added a python transform into the Kestra flow to unnest and store it in separate `.csv` files. These are then also loaded into BigQuery tables as snapshot datasets.
 
 ### Data Transformation
 
 Once the data is available in BigQuery, it gets transformed and modeled into tables specifically designed to fit the charts on the dashboard. I decided to use Dataform for this purpose, since it is native to the Google Cloud and integrates seamlessly with BigQuery. The data transformations are written into [SQL files](./definitions), which make up the data model. Below is a screenshot of the data lineage:
 
-![graph of the data model in dataform](./dataform_screenshot.png)
+![graph of the data model in dataform](./img/dataform_screenshot.png)
 
 The very first nodes on the graph are views, which I then materialized into a joined staging table in the next step. Wherever possible, I partitioned the tables by date and clustered them by location, because these dimensions are frequently used in `WHERE` or `GROUP BY` clauses.
 
@@ -65,7 +65,7 @@ All the nodes on the graph above are available for querying as tables or views i
 
 Finally, I connected LookerStudio to BigQuery via Connected Sheets. I introduced this additional step to limit the query costs to a minimum. In the sheet, I scheduled a data extract from BigQuery once per day (which gets billed), but then the connection between the sheet and LookerStudio is free, so it doesn't matter how many people use the dashboard or how often the filters are adjusted. Below is a screenshot of the dashboard.
 
-![screenshot of the LookerStudio dashboard](./lookerstudio_screenshot.png)
+![screenshot of the LookerStudio dashboard](./img/lookerstudio_screenshot.png)
 
 The dashboard can be accessed [here](https://lookerstudio.google.com/reporting/f96397ee-34dc-4b35-a1e6-bcc93d6708ef).
 
@@ -110,8 +110,10 @@ Ensure you have the following:
 ## Repository Structure
 
 ```
+├── data/                   # Sample data files  
 ├── definitions/            # Dataform SQL transformations       
 ├── flows/                  # Kestra workflows
+├── img/                    # Screenshots etc.
 ├── .gitignore              # Files to be ignored by git
 ├── LICENSE                 # MIT Open Source License
 ├── README.md               # Project readme file
