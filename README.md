@@ -71,41 +71,41 @@ The dashboard can be accessed [here](https://lookerstudio.google.com/reporting/f
 
 ### Version Control and Productionization
 
-Both Kestra and Dataform are connected to this git repository. This allows for a clear distinction between development and production code. In Kestra, I set up a script that syncs the flows from GitHub, while on Dataform, I scheduled a fresh compilation of the production code once each day. 
+Both Kestra and Dataform are connected to this git repository. This allows for a clear distinction between development and production code. In Kestra, I set up [flows](./flows/system) that let me sync the files from GitHub, while on Dataform, I scheduled a fresh compilation of the production code once each day.
 
 ## Setup and Deployment
 
 ### Prerequisites
 
-Ensure you have the following installed:
+Ensure you have the following:
 
 - Docker & Docker Compose
-- Google Cloud SDK
-- GitHub account with repository access
+- Google Cloud Platform account with billing enabled
+- GitHub account
 
 ### Steps to Deploy
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/your-repository.git
-   cd your-repository
-   ```
-2. **Setup Google Cloud VM**:
+   - Download all the project files by running:
+      ```bash
+      git clone https://github.com/Alessine/zurich_air_quality.git
+      ```
+3. **Setup Google Cloud VM**:
    - Create a VM instance on Google Cloud.
-   - Configure a scheduling job to run scripts periodically.
-   - Install necessary dependencies (Docker, Kestra, BigQuery SDK, etc.).
-3. **Run Kestra for Workflow Management**:
-   - Deploy Kestra using Docker Compose:
+   - Configure a scheduling job with a startup script to run the pipelines periodically.
+4. **Run Kestra for Workflow Management**:
+   - Add your GitHub and GCP credentials and run the [docker-compose.yml file](./docker-compose.yml) to deploy Kestra using Docker Compose:
      ```bash
      docker-compose up -d
      ```
-   - Configure workflows to automate data ingestion and transformations.
-4. **Integrate with BigQuery**:
-   - Set up datasets and tables in BigQuery.
-   - Deploy Dataform transformations.
-5. **Build Dashboards with Looker Studio**:
-   - Connect Looker Studio to BigQuery.
-   - Create interactive dashboards.
+   - Configure workflows to automate data ingestion and transformations with the help of these [flow files](./flows/prod).
+5. **Set up Dataform for Data Modeling**:
+   - Create a repository and set up a development workspace.
+   - Use the [workflow settings](./workflow_settings.yaml) and [definitions](./definitions) provided to set up the data model.
+   - Push the code to production, compile it and execute it to generate the BigQuery tables.
+6. **Build Dashboards with Looker Studio**:
+   - Connect the required BigQuery datasets with a connected sheet and set up an automatic refresh.
+   - Connect LookerStudio with the sheet to create an interactive dashboard.
 
 ## Repository Structure
 
