@@ -1,6 +1,6 @@
 # End-to-end Data Pipeline: Zurich Air Quality Data
 
-
+![photo of a city in the smog](./smog.jpg)
 
 Photo by [Call Me Fred](https://unsplash.com/de/@callmefred) on [Unsplash](https://unsplash.com/de/fotos/luftaufnahme-der-stadt-uDLtqbbVR4I)
       
