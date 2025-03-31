@@ -4,17 +4,15 @@
 
 Photo by [Call Me Fred](https://unsplash.com/de/@callmefred) on [Unsplash](https://unsplash.com/de/fotos/luftaufnahme-der-stadt-uDLtqbbVR4I)
 
-## Problem Statement
-
-How many days above the safe emission limit for each of the different air pollutants?
-
 ## Project Overview
 
 This project is my final submission for the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) (cohort 2025). I built a batch data pipeline that automatically updates daily, leveraging modern cloud and containerization technologies. The data used in this project is provided by the City of Zurich with an open source Creative Commons License (cc-zero).
 
-Public Links:
-- [raw data](https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_tageswerte)
-- [dashboard](https://lookerstudio.google.com/reporting/f96397ee-34dc-4b35-a1e6-bcc93d6708ef)
+## Problem Statement
+
+Air pollution is a serious public health issue in many cities in the world. I discovered years ago that my city publishes all of its measurements of air pollutants, but I didn't know how to make sense of this data. I wanted to create a visualization that gives a clear indication of how serious a certain level of pollution is, for each independent pollutant, and which also explains what this pollutant does. 
+
+Therefore, I generated a dataset that contains the pollution measurements, but also emission limits and descriptions for each pollutant. For the visualization I then chose to calculate how many days in a year the pollution was higher than it should have been. This gives an intuitive understanding of how damaging the situation is.
 
 ## Technologies Used
 
