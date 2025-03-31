@@ -69,9 +69,11 @@ Finally, I connected LookerStudio to BigQuery via Connected Sheets. I introduced
 
 ![screenshot of the LookerStudio dashboard](./lookerstudio_screenshot.png)
 
+The dashboard can be accessed [here](https://lookerstudio.google.com/reporting/f96397ee-34dc-4b35-a1e6-bcc93d6708ef).
+
 ### Version Control and Productionization
 
-
+Both Kestra and Dataform are connected to this git repository. This allows for a clear distinction between development and production code. In Kestra, I set up a script that syncs the flows from GitHub, while on Dataform, I scheduled a fresh compilation of the production code once each day. 
 
 ## Setup and Deployment
 
