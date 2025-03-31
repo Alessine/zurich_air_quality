@@ -1,6 +1,6 @@
 # End-to-end Data Pipeline: Zurich Air Quality Data
 
-![screenshot of the dashboard](./)
+![screenshot of the dashboard](./dashboard_screenshot.jpg)
 
 ## Project Overview
 
