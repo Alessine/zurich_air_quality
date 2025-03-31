@@ -1,11 +1,5 @@
-<<<<<<< HEAD
-node_modules/
-=======
 ### credentials ###
 *credentials/*
-
-### data ###
-*data/*
 
 ### JupyterNotebooks ###
 # gitignore template for Jupyter Notebooks
@@ -13,6 +7,8 @@ node_modules/
 
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+
+node_modules/
 
 # IPython
 profile_default/
@@ -391,4 +387,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/python,jupyternotebooks,macos,windows,linux,dotenv,pycharm,visualstudiocode
->>>>>>> refs/heads/develop
