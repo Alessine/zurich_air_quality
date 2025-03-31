@@ -3,7 +3,10 @@
 ![photo of a city in the smog](./smog.jpg)
 
 Photo by [Call Me Fred](https://unsplash.com/de/@callmefred) on [Unsplash](https://unsplash.com/de/fotos/luftaufnahme-der-stadt-uDLtqbbVR4I)
-      
+
+## Problem Statement
+
+How many days above the safe emission limit for each of the different air pollutants?
 
 ## Project Overview
 
