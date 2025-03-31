@@ -6,7 +6,7 @@
 
 This project is my final submission for the Data Engineering Zoomcamp (cohort 2025). For this project I built a batch data pipeline that automatically updates daily, leveraging modern cloud and containerization technologies. The data used in this project is provided by the City of Zurich with an open source Creative Commons License (cc-zero).
 
-Relevant Links:
+Public Links:
 - [raw data](https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_tageswerte)
 - [dashboard](https://lookerstudio.google.com/reporting/f96397ee-34dc-4b35-a1e6-bcc93d6708ef)
 
@@ -26,12 +26,29 @@ The project utilizes the following technologies:
 
 The project follows a structured data pipeline:
 
-1. **Data Extraction**: Extracts raw data from the City's Open Data Catalog.
-2. **Data Ingestion**: Uses Kestra in Dockerized containers to process and upload data to Google Cloud Storage.
-3. **Orchestration**: Kestra schedules and triggers workflows to process data and load it into BigQuery tables.
-4. **Data Transformation**: Dataform is used to apply transformations and define the data model in BigQuery.
-5. **Data Storage & Querying**: Processed data is stored in BigQuery for analytical queries.
-6. **Visualization & Reporting**: Looker Studio connects to BigQuery via Google Connected Sheets to generate low-cost reports and dashboards.
+### Data Extraction
+
+Extracts raw data from the City's Open Data Catalog.
+
+### Data Ingestion
+
+Uses Kestra in Dockerized containers to process and upload data to Google Cloud Storage.
+
+### Orchestration
+
+Kestra schedules and triggers workflows to process data and load it into BigQuery tables.
+
+### Data Transformation
+
+Dataform is used to apply transformations and define the data model in BigQuery.
+
+### Data Storage & Querying
+
+Processed data is stored in BigQuery for analytical queries.
+
+### Visualization & Reporting
+
+Looker Studio connects to BigQuery via Google Connected Sheets to generate low-cost reports and dashboards.
 
 ## Setup and Deployment
 
