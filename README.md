@@ -2,6 +2,9 @@
 
 
 
+Photo by [Call Me Fred](https://unsplash.com/de/@callmefred) on [Unsplash](https://unsplash.com/de/fotos/luftaufnahme-der-stadt-uDLtqbbVR4I)
+      
+
 ## Project Overview
 
 This project is my final submission for the Data Engineering Zoomcamp (cohort 2025). For this project I built a batch data pipeline that automatically updates daily, leveraging modern cloud and containerization technologies. The data used in this project is provided by the City of Zurich with an open source Creative Commons License (cc-zero).
