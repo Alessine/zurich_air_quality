@@ -29,7 +29,7 @@ The project utilizes the following technologies:
 
 ![screenshot of project architecture](./architecture_screenshot.png)
 
-The project follows a structured data pipeline:
+Below is a detailed description of each step in the data pipeline:
 
 ### Data Extraction
 
