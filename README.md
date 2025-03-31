@@ -17,13 +17,14 @@ Public Links:
 
 The project utilizes the following technologies:
 
-- **Docker & Docker Compose**: For containerization and orchestration ([Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/)).
-- **Google Cloud Virtual Machine (VM) with Scheduling**: To run automated data workflows ([Google Compute Engine](https://cloud.google.com/compute)).
-- **Kestra**: Orchestrating workflows in a scalable manner ([Kestra](https://kestra.io/)).
-- **BigQuery**: Cloud-based data warehouse for storing and querying data ([BigQuery](https://cloud.google.com/bigquery)).
-- **Dataform**: Automated data transformations (modeling) in BigQuery ([Dataform](https://dataform.co/)).
-- **Looker Studio**: Creating visualizations and reports ([Looker Studio](https://lookerstudio.google.com/)).
-- **GitHub**: Version control and project management ([GitHub](https://github.com/)).
+- **Docker & Docker Compose**: For containerization and orchestration ([Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/))
+- **Google Cloud Virtual Machine (VM) with Scheduling**: To run automated data workflows ([Google Compute Engine](https://cloud.google.com/compute))
+- **Kestra**: Orchestrating workflows in a scalable manner ([Kestra](https://kestra.io/))
+- **Google Cloud Storage**: Storing raw data files ([Google Cloud Storage](https://cloud.google.com/storage))
+- **BigQuery**: Cloud-based data warehouse for storing and querying data ([BigQuery](https://cloud.google.com/bigquery))
+- **Dataform**: Automated data transformations (modeling) in BigQuery ([Dataform](https://cloud.google.com/dataform))
+- **Looker Studio**: Creating visualizations and reports ([Looker Studio](https://cloud.google.com/looker-studio))
+- **GitHub**: Version control and project management
 
 ## Project Architecture
 
