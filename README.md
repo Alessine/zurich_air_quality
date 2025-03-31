@@ -37,7 +37,7 @@ Below is an illustration of the different steps in the data pipeline and the too
 
 In the following sections, there's detailed information on how each of these steps was implemented.
 
-### Data Extraction
+### Data Extraction and Ingestion
 
 The [raw data files](https://data.stadt-zuerich.ch/dataset/ugz_luftschadstoffmessung_tageswerte) are provided by the City of Zurich in their Open Data Catalog. To extract these automatically, I set up a Docker container with a Kestra image using this [docker-compose file](./docker-compose.yml) and hosted it in a virtual machine in the Google Cloud. I put the VM on a schedule to optimize the cost and used the following start-up script to start up the container inside the VM:
 
@@ -47,20 +47,18 @@ apt update
 docker compose -f /home/angelakniederberger/docker-compose.yml start
 ```
 
-In Kestra, I scheduled three [flows](./flows/prod) to set the key-value pairs for Google Cloud authentication and extract (1) the air pollution metrics and (2) the metadata on air pollutants, emission limits and data collection locations.
+In Kestra, I scheduled three [flows](./flows/prod): to set the key-value pairs for Google Cloud authentication and extract (1) the air pollution metrics and (2) the metadata on air pollutants, emission limits and data collection locations. After downloading the data from the Open Data Catalog, it gets saved to Google Cloud Storage and from there loaded into BigQuery tables. 
 
-
-### Data Ingestion
-
-Uses Kestra in Dockerized containers to process and upload data to Google Cloud Storage.
-
-### Orchestration
-
-Kestra schedules and triggers workflows to process data and load it into BigQuery tables.
+For the air quality metrics, which are available in `.csv` format, the data then gets loaded into one BigQuery table incrementally (day by day). The metadata is provided in a nested json format, for which I added a python transform into the Kestra flow to unnest and store it in separate `.csv` files. These are then also loaded into BigQuery tables as snapshot datasets.
 
 ### Data Transformation
 
-Dataform is used to apply transformations and define the data model in BigQuery.
+Once the data is available in BigQuery, it gets transformed and modeled into tables specifically designed to fit the charts on the dashboard. I decided to use Dataform for this purpose, since it is native to the Google Cloud and integrates seamlessly with BigQuery. The data transformations are written into [SQL files](./definitions), which make up the data model. Below is a screenshot of the data lineage:
+
+![graph of the data model in dataform]()
+
+
+
 
 ### Data Storage & Querying
 
@@ -70,6 +68,8 @@ Processed data is stored in BigQuery for analytical queries.
 
 Looker Studio connects to BigQuery via Google Connected Sheets to generate low-cost reports and dashboards.
 ![screenshot of the dashboard](./dashboard_screenshot.png)
+
+### Versioning
 
 ## Setup and Deployment
 
