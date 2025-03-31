@@ -55,21 +55,23 @@ For the air quality metrics, which are available in `.csv` format, the data then
 
 Once the data is available in BigQuery, it gets transformed and modeled into tables specifically designed to fit the charts on the dashboard. I decided to use Dataform for this purpose, since it is native to the Google Cloud and integrates seamlessly with BigQuery. The data transformations are written into [SQL files](./definitions), which make up the data model. Below is a screenshot of the data lineage:
 
-![graph of the data model in dataform]()
+![graph of the data model in dataform](./dataform_screenshot.png)
 
-
-
+The very first nodes on the graph are views, which I then materialized into a joined staging table in the next step. Wherever possible, I partitioned the tables by date and clustered them by location, because these dimensions are frequently used in `WHERE` or `GROUP BY` clauses.
 
 ### Data Storage & Querying
 
-Processed data is stored in BigQuery for analytical queries.
+All the nodes on the graph above are available for querying as tables or views in BigQuery. This makes it easier to fulfill ad hoc reporting requirements.
 
 ### Visualization & Reporting
 
-Looker Studio connects to BigQuery via Google Connected Sheets to generate low-cost reports and dashboards.
-![screenshot of the dashboard](./dashboard_screenshot.png)
+Finally, I connected LookerStudio to BigQuery via Connected Sheets. I introduced this additional step to limit the query costs to a minimum. In the sheet, I scheduled a data extract from BigQuery once per day (which gets billed), but then the connection between the sheet and LookerStudio is free, so it doesn't matter how many people use the dashboard or how often the filters are adjusted. Below is a screenshot of the dashboard.
 
-### Versioning
+![screenshot of the LookerStudio dashboard](./lookerstudio_screenshot.png)
+
+### Version Control and Productionization
+
+
 
 ## Setup and Deployment
 
