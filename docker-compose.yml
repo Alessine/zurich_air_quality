@@ -44,8 +44,8 @@ services:
           server:
             basicAuth:
               enabled: false
-              username: "angelaniederberger@protonmail.ch" # it must be a valid email address
-              password: 7TFKW%svR1n@9z!
+              username: "admin@localhost.dev" # it must be a valid email address
+              password: kestra
           repository:
             type: postgres
           storage:
