@@ -1,6 +1,6 @@
 # End-to-end Data Pipeline: Zurich Air Quality Data
 
-![screenshot of the dashboard](./dashboard_screenshot.jpg)
+
 
 ## Project Overview
 
@@ -23,6 +23,8 @@ The project utilizes the following technologies:
 - **GitHub**: Version control and project management ([GitHub](https://github.com/)).
 
 ## Project Architecture
+
+![screenshot of project architecture](./architecture_screenshot.jpg)
 
 The project follows a structured data pipeline:
 
@@ -49,6 +51,7 @@ Processed data is stored in BigQuery for analytical queries.
 ### Visualization & Reporting
 
 Looker Studio connects to BigQuery via Google Connected Sheets to generate low-cost reports and dashboards.
+![screenshot of the dashboard](./dashboard_screenshot.jpg)
 
 ## Setup and Deployment
 
