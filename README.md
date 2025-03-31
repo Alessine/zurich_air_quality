@@ -24,7 +24,7 @@ The project utilizes the following technologies:
 
 ## Project Architecture
 
-![screenshot of project architecture](./architecture_screenshot.jpg)
+![screenshot of project architecture](./architecture_screenshot.png)
 
 The project follows a structured data pipeline:
 
@@ -51,7 +51,7 @@ Processed data is stored in BigQuery for analytical queries.
 ### Visualization & Reporting
 
 Looker Studio connects to BigQuery via Google Connected Sheets to generate low-cost reports and dashboards.
-![screenshot of the dashboard](./dashboard_screenshot.jpg)
+![screenshot of the dashboard](./dashboard_screenshot.png)
 
 ## Setup and Deployment
 
