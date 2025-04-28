@@ -45,7 +45,7 @@ apt update
 docker compose -f /home/angelakniederberger/docker-compose.yml start
 ```
 
-In Kestra, I scheduled three [flows](./img/flows/prod): to set the key-value pairs for Google Cloud authentication and extract (1) the air pollution metrics and (2) the metadata on air pollutants, emission limits and data collection locations. After downloading the data from the Open Data Catalog, it gets saved to Google Cloud Storage and from there loaded into BigQuery tables. 
+In Kestra, I scheduled three [flows](./flows/prod): to set the key-value pairs for Google Cloud authentication and extract (1) the air pollution metrics and (2) the metadata on air pollutants, emission limits and data collection locations. After downloading the data from the Open Data Catalog, it gets saved to Google Cloud Storage and from there loaded into BigQuery tables. 
 
 For the air quality metrics, which are available in `.csv` format ([sample data](./data/ugz_ogd_air_d1_2025.csv)), the data then gets loaded into one BigQuery table incrementally (day by day). The metadata is provided in a nested `.json` format ([sample data](./data/uzg_ogd_metadaten.json)), for which I added a python transform into the Kestra flow to unnest and store it in separate `.csv` files. These are then also loaded into BigQuery tables as snapshot datasets.
 
