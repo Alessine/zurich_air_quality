@@ -10,7 +10,7 @@ This project is my final submission for the [Data Engineering Zoomcamp](https://
 
 ## Problem Statement
 
-Air pollution is a serious public health issue in many cities in the world. I discovered years ago that my city publishes all of its measurements of air pollutants, but I didn't know how to make sense of this data. I wanted to create a visualization that gives a clear indication of how serious a certain level of pollution is, for each independent pollutant, and which also explains what this pollutant does. 
+Air pollution is a serious public health issue in many cities around the world. I discovered years ago that my city publishes all of its measurements of air pollutants, but I didn't know how to make sense of this data. I wanted to create a visualization that gives a clear indication of how serious a certain level of pollution is, for each independent pollutant, and which also explains what this pollutant does. 
 
 Therefore, I generated a dataset that contains the pollution measurements, but also emission limits and descriptions for each pollutant. For the visualization I then chose to calculate how many days in a year the pollution was higher than it should have been. This gives an intuitive understanding of how damaging the situation is.
 
