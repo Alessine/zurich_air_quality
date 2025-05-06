@@ -1,0 +1,8 @@
+config {
+    type: "declaration",
+    description: "Metadata on measurement locations",
+    database: "zurich-air-quality",
+    schema: "air_quality_data",
+    name: "locations_metadata"
+}
+

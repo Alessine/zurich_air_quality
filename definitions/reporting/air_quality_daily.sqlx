@@ -1,5 +1,8 @@
 config {
-    type: "table",
+    type: "incremental",
+    description: "Daily reporting table with only the relevant dimensions and metrics",
+    database: "zurich-air-quality",
+    schema: "dataform",
     bigquery: {
         partitionBy: "date",
         clusterBy: ["location"]
@@ -23,4 +26,4 @@ FROM
   ${ref("air_quality_staging")}
 WHERE
   date > '2023-12-31'
-  AND parameter != 'O3_nb_h1>120'
+  AND parameter != 'O3_nb_h1>120' ${when(incremental(), `AND date > (SELECT MAX(date) FROM ${self()})`)}

@@ -1,0 +1,8 @@
+config {
+    type: "declaration",
+    description: "Metadata on emission parameters",
+    database: "zurich-air-quality",
+    schema: "air_quality_data",
+    name: "parameters_metadata"
+}
+
