@@ -11,6 +11,6 @@ END
   emission_limit,
   stat_definition
 FROM
-  `zurich-air-quality.air_quality_data.limits_metadata`
+  ${ref("limits_metadata")}
 WHERE
   granularity != 'y1'
