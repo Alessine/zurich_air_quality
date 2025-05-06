@@ -1,0 +1,7 @@
+config {
+    type: "declaration",
+    description: "Daily air quality metrics",
+    database: "zurich-air-quality",
+    schema: "air_quality_data",
+    name: "daily_air_quality"
+}

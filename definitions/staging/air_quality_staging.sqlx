@@ -1,5 +1,8 @@
 config {
-    type: "table",
+    type: "incremental",
+    description: "Staging table with all the dimensions and metrics",
+    database: "zurich-air-quality",
+    schema: "dataform",
     bigquery: {
         partitionBy: 'date',
         clusterBy: ['location']
@@ -30,16 +33,17 @@ END
   air_quality_facts.unit,
   air_quality_facts.value
 FROM
-  ${ref("air_quality_facts")} AS air_quality_facts
+  ${ref("daily_air_quality")} AS air_quality_facts 
 JOIN
-  ${ref("parameter_dims")} AS param_dims
+  ${ref("parameters_metadata")} AS param_dims
 ON
   air_quality_facts.parameter = param_dims.id
 JOIN
-  ${ref("location_dims")} AS loc_dims
+  ${ref("locations_metadata")} AS loc_dims
 ON
   air_quality_facts.location = loc_dims.id
 LEFT JOIN
-  ${ref("limit_dims")} AS limit_dims
+  ${ref("limit_dims_clean")} AS limit_dims
 ON
   air_quality_facts.parameter = limit_dims.id
+${when(incremental(), `WHERE date > (SELECT MAX(date) FROM ${self()})`)}
