@@ -6,7 +6,7 @@ Photo by [Call Me Fred](https://unsplash.com/de/@callmefred) on [Unsplash](https
 
 ## Project Overview
 
-This project is my final submission for the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) (cohort 2025). I built a batch data pipeline that automatically updates daily, leveraging modern cloud and containerization technologies. The data used in this project is provided by the City of Zurich with an open source Creative Commons License (cc-zero).
+This project is my final submission for the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp) (cohort 2025). I built a batch data pipeline that automatically updates daily, leveraging modern cloud and containerization technologies. The data used in this project is provided by the City of Zurich with an open source Creative Commons License (cc-zero). For a more detailed explanation of the whole project, check out my [Medium Article](https://medium.com/gitconnected/building-an-end-to-end-data-pipeline-in-the-google-cloud-4ae46536ea6a).
 
 ## Problem Statement
 
